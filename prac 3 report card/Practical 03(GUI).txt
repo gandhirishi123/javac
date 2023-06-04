@@ -1,0 +1,85 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class StudentResultGUI extends JFrame {
+    private JLabel[] subjectLabels;
+    private JTextField[] marksFields;
+    private JButton calculateButton;
+
+    public StudentResultGUI() {
+        setTitle("Marks Entry");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Array of subject names
+        String[] subjects = {"Subject 1", "Subject 2", "Subject 3", "Subject 4"};
+
+        // Create labels and text fields for marks entry
+        subjectLabels = new JLabel[subjects.length];
+        marksFields = new JTextField[subjects.length];
+        JPanel marksPanel = new JPanel(new GridLayout(subjects.length, 2, 10, 10));
+
+        for (int i = 0; i < subjects.length; i++) {
+            subjectLabels[i] = new JLabel(subjects[i]);
+            marksFields[i] = new JTextField();
+            marksPanel.add(subjectLabels[i]);
+            marksPanel.add(marksFields[i]);
+        }
+
+        // Create calculate button
+        calculateButton = new JButton("Calculate Result");
+        calculateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                calculateResult();
+            }
+        });
+
+        // Add components to the main frame
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
+        contentPane.add(marksPanel, BorderLayout.CENTER);
+        contentPane.add(calculateButton, BorderLayout.SOUTH);
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    private void calculateResult() {
+        int[] marks = new int[marksFields.length];
+
+        // Get marks from text fields
+        for (int i = 0; i < marksFields.length; i++) {
+            String marksText = marksFields[i].getText();
+            try {
+                marks[i] = Integer.parseInt(marksText);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid marks entered for subject " + (i + 1),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        // Calculate total marks and average
+        int totalMarks = 0;
+        for (int mark : marks) {
+            totalMarks += mark;
+        }
+        double averageMarks = (double) totalMarks / marks.length;
+
+        // Display result in a separate window
+        JOptionPane.showMessageDialog(this, "Total Marks: " + totalMarks +
+                "\nAverage Marks: " + String.format("%.2f", averageMarks), "Student Result", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new StudentResultGUI();
+            }
+        });
+    }
+}
